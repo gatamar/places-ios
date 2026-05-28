@@ -7,13 +7,32 @@
 
 import os
 
-enum PlacesLogCategory: String {
-    case viewModel
+enum PlacesLogCategory: CustomStringConvertible {
+    enum ViewModel: String {
+        case addCustomPlace
+        case placesList
+    }
+    enum Service: String {
+        case currentLocation
+    }
+    case viewModel(ViewModel)
     case navigator
+    case service(Service)
+    
+    var description: String {
+        switch self {
+        case .viewModel(let model):
+            return "viewModel.\(model.rawValue)"
+        case .navigator:
+            return "navigator"
+        case .service(let service):
+            return "service.\(service.rawValue)"
+        }
+    }
 }
 
 extension Logger {
     static func make(for category: PlacesLogCategory) -> Self {
-        Logger(subsystem: "com.gatamar.places", category: category.rawValue)
+        Logger(subsystem: "com.gatamar.places", category: category.description)
     }
 }

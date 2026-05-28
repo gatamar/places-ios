@@ -12,7 +12,7 @@ import UIKit // for UIApplication.shared.openURL
 
 @MainActor @Observable
 final class PlacesListViewModel {
-    private let logger = Logger.make(for: .viewModel)
+    private let logger = Logger.make(for: .viewModel(.placesList))
     private let locationsAPI: LocationsAPI
     private let placesNavigator: PlacesNavigator
 
