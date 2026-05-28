@@ -27,8 +27,8 @@ enum PlacesDeeplinkFormatter {
 private extension Location {
     var toQueryItems: [URLQueryItem] {
         [
-            URLQueryItem(name: "lat", value: String(lat)),
-            URLQueryItem(name: "long", value: String(long)),
+            URLQueryItem(name: "lat", value: String(latitude)),
+            URLQueryItem(name: "long", value: String(longitude)),
             name.flatMap { URLQueryItem(name: "name", value: $0) }
         ].compactMap { $0 }
     }

@@ -10,13 +10,13 @@ import Foundation
 // MARK: - API
 
 protocol LocationsAPI {
-    func fetch() async -> Result<[Location], Error>
+    func fetch() async -> Result<[LocationDTO], Error>
 }
 
 final class LocationsAPIImpl: LocationsAPI {
     private let decoder = JSONDecoder()
 
-    func fetch() async -> Result<[Location], Error> {
+    func fetch() async -> Result<[LocationDTO], Error> {
         let url = URL(string: "https://raw.githubusercontent.com/abnamrocoesd/assignment-ios/main/locations.json")!
         let request = URLRequest(url: url)
         do {
@@ -32,10 +32,10 @@ final class LocationsAPIImpl: LocationsAPI {
 // MARK: - DTO
 
 private struct LocationsResponse: Decodable {
-    let locations: [Location]
+    let locations: [LocationDTO]
 }
 
-struct Location: Decodable, Hashable {
+struct LocationDTO: Decodable {
     let name: String?
     let lat: Double
     let long: Double

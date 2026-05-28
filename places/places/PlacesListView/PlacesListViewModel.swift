@@ -32,7 +32,7 @@ final class PlacesListViewModel {
         switch await locationsAPI.fetch() {
         case .success(let locations):
             logger.debug("data fetched successfully")
-            self.locations = locations
+            self.locations = locations.map(Location.init).sorted()
             self.errorText = nil
         case .failure(let error):
             // TODO: add proper Error handling instead of localizedDescription!
@@ -45,5 +45,34 @@ final class PlacesListViewModel {
     func handleTap(on location: Location) {
         logger.debug("handle tap")
         placesNavigator.openPlace(location)
+    }
+}
+
+private extension Location {
+    init(with dto: LocationDTO) {
+        self.init(
+            name: dto.name,
+            latitude: dto.lat,
+            longitude: dto.long,
+            isCustom: false
+        )
+    }
+}
+
+extension Location: Comparable {
+    static func < (lhs: Location, rhs: Location) -> Bool {
+        guard lhs.isCustom == rhs.isCustom else {
+            return lhs.isCustom
+        }
+        
+        guard let lhsName = lhs.name else {
+            return false
+        }
+        
+        guard let rhsName = rhs.name else {
+            return false
+        }
+        
+        return lhsName.localizedCaseInsensitiveCompare(rhsName) == .orderedAscending
     }
 }
