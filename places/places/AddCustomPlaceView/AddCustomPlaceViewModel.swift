@@ -18,39 +18,45 @@ final class AddCustomPlaceViewModel {
         service.currentLocationCoord
     }
     
-    var locationsRepository: LocationRepository {
+    private var locationsRepository: LocationRepository {
         dependencies.locationsRepository
     }
 
+    private var service: CurrentLocationService {
+        dependencies.currentLocationService
+    }
+
     private let dependencies: PlacesDependencies
-    private let service: CurrentLocationService
-    init(
-        dependencies: PlacesDependencies,
-        service: CurrentLocationService = CurrentLocationServiceImpl()
-    ) {
+    init(dependencies: PlacesDependencies) {
         self.dependencies = dependencies
-        self.service = service
     }
 
     func loadCurrentLocation() {
-        service.start()
+        service.startDetectingCurrentLocation()
     }
     
     func saveCustomChosenPlace(_ coord: CLLocationCoordinate2D?) {
+        Task {
+            await saveCustomChosenPlaceAsync(coord)
+        }
+    }
+
+    private func saveCustomChosenPlaceAsync(_ coord: CLLocationCoordinate2D?) async {
         logger.debug("save custom place")
         guard let coord else {
             logger.error("nothing to save")
             return
         }
-        locationsRepository.appendCustom(location: Location(coord))
+        let name = await service.detectLocationName(by: coord)
+        locationsRepository.appendCustom(location: Location(coord, name: name))
         logger.debug("custom place saved")
     }
 }
 
 private extension Location {
-    init(_ coord: CLLocationCoordinate2D) {
+    init(_ coord: CLLocationCoordinate2D, name: String?) {
         self.init(
-            name: nil,
+            name: name,
             latitude: coord.latitude,
             longitude: coord.longitude,
             isCustom: true

@@ -10,7 +10,8 @@ import os
 
 protocol CurrentLocationService {
     @MainActor var currentLocationCoord: CLLocationCoordinate2D { get }
-    func start()
+    func startDetectingCurrentLocation()
+    func detectLocationName(by coord: CLLocationCoordinate2D) async -> String?
 }
 
 @Observable
@@ -19,12 +20,13 @@ final class CurrentLocationServiceImpl: NSObject, CurrentLocationService, CLLoca
 
     @MainActor private(set) var currentLocationCoord: CLLocationCoordinate2D = .init(latitude: 0, longitude: 0)
     
+    private let geocoder = CLGeocoder()
     private let locationManager: CLLocationManager
     init(locationManager: CLLocationManager = .init()) {
         self.locationManager = locationManager
     }
     
-    func start() {
+    func startDetectingCurrentLocation() {
         logger.debug("load current location")
         if locationManager.delegate == nil {
             logger.debug("set location manager delegate")
@@ -35,6 +37,23 @@ final class CurrentLocationServiceImpl: NSObject, CurrentLocationService, CLLoca
         locationManager.requestWhenInUseAuthorization()
     }
     
+    func detectLocationName(by coord: CLLocationCoordinate2D) async -> String? {
+        logger.debug("geocode")
+        var placemark: CLPlacemark?
+        do {
+            placemark = try await geocoder.reverseGeocodeLocation(
+                .init(
+                    latitude: coord.latitude,
+                    longitude: coord.longitude
+                )
+            ).first
+        } catch {
+            logger.error("failed to perform reverse geocoding: \(error)")
+        }
+        
+        return placemark?.locality
+    }
+
     // MARK: CLLocationManagerDelegate
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

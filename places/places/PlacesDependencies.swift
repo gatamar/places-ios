@@ -11,13 +11,16 @@ import os
 final class PlacesDependencies {
     let locationsRepository: LocationRepository
     let placesNavigator: PlacesNavigator
+    let currentLocationService: CurrentLocationService
     
     init(
         locationsRepository: LocationRepository = LocationRepositoryImpl(),
-        placesNavigator: PlacesNavigator = UIApplication.shared
+        placesNavigator: PlacesNavigator = UIApplication.shared,
+        currentLocationService: CurrentLocationService = CurrentLocationServiceImpl()
     ) {
         self.locationsRepository = locationsRepository
         self.placesNavigator = placesNavigator
+        self.currentLocationService = currentLocationService
     }
 }
 
