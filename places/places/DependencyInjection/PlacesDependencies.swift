@@ -26,13 +26,15 @@ final class PlacesDependencies {
 
 private let logger = Logger.make(for: .navigator)
 extension UIApplication: PlacesNavigator {
-    func openPlace(_ location: Location) {
+    func openPlace(_ location: Location) -> Bool {
         let url = PlacesDeeplinkFormatter.makeDeeplinkURL(for: location)
-        logger.debug("Opening deeplink: \(url)")
-        open(url) { opened in
-            if !opened {
-                logger.error("Failed to open \(url)")
-            }
+        guard canOpenURL(url) else {
+            logger.error("Deeplink not supported: \(url)")
+            return false
         }
+        logger.debug("Opening deeplink: \(url)")
+                
+        open(url)
+        return true
     }
 }

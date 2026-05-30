@@ -41,7 +41,10 @@ final class PlacesListViewModel {
     
     func handleTap(on location: Location) {
         logger.debug("handle tap")
-        placesNavigator.openPlace(location)
+        guard placesNavigator.openPlace(location) else {
+            // TODO: show an error
+            return
+        }
     }
 }
 

@@ -6,5 +6,5 @@
 //
 
 protocol PlacesNavigator {
-    func openPlace(_ location: Location)
+    func openPlace(_ location: Location) -> Bool
 }
