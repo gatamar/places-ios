@@ -21,6 +21,8 @@ struct PlacesListView: View {
             List {
                 ForEach(viewModel.locations, id: \.self) { location in
                     Text(location.name ?? "untitled")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
                         .onTapGesture {
                             viewModel.handleTap(on: location)
                         }
