@@ -22,9 +22,7 @@ final class PlacesListViewModel {
     var locations: [Location] {
         locationsRepository.locations
     }
-    var errorText: String? {
-        locationsRepository.latestFetchError?.description
-    }
+    var userFacingError: UserFacingError?
     
     var placesNavigator: PlacesNavigator {
         dependencies.placesNavigator
@@ -36,15 +34,35 @@ final class PlacesListViewModel {
     }
     
     func fetchData() async {
+        observeLocationRepoErrors()
         await locationsRepository.fetchFromBackend()
     }
     
     func handleTap(on location: Location) {
         logger.debug("handle tap")
         guard placesNavigator.openPlace(location) else {
-            // TODO: show an error
+            userFacingError = UserFacingError(message: "Please install the Wiki app in order to learn more about this place!")
             return
         }
+    }
+    
+    // MARK: Private
+    func observeLocationRepoErrors() {
+        withObservationTracking {
+            _ = locationsRepository.latestFetchError
+        } onChange: {
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if let errorMessage = locationsRepository.latestFetchError?.description {
+                    userFacingError = UserFacingError(message: errorMessage)
+                }
+
+                // yeah, Apple could do better :)
+                // in case you don't like this recursive pattern, see https://github.com/swiftlang/swift-evolution/blob/main/proposals/0395-observability.md
+                self.observeLocationRepoErrors()
+            }
+        }
+
     }
 }
 
@@ -63,5 +81,13 @@ extension Location: Comparable {
         }
         
         return lhsName.localizedCaseInsensitiveCompare(rhsName) == .orderedAscending
+    }
+}
+
+struct UserFacingError: LocalizedError {
+    let message: String
+
+    var errorDescription: String? {
+        message
     }
 }

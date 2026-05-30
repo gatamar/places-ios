@@ -37,6 +37,19 @@ struct PlacesListView: View {
                     }
                 }
             }
+            .alert(
+                isPresented: .init(get: {
+                    viewModel.userFacingError != nil
+                }, set: { _ in
+                    // no-op
+                }),
+                error: viewModel.userFacingError,
+                actions: {
+                    Button("Got it") {
+                        viewModel.userFacingError = nil
+                    }
+                }
+            )
             .sheet(isPresented: $isShowingAddPlaceSheet) {
                 AddCustomPlaceView(dependencies: dependencies)
             }
