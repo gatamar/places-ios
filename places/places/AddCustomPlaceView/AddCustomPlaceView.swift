@@ -9,27 +9,47 @@ import SwiftUI
 import MapKit
 
 struct AddCustomPlaceView: View {
+    @Environment(\.dismiss) private var dismiss
     private let viewModel = AddCustomPlaceViewModel()
     @State private var selectedLocationCoord: CLLocationCoordinate2D?
 
     var body: some View {
-        MapReader { reader in
-            Map {
-                if let selectedLocationCoord = selectedLocationCoord {
-                    Marker(coordinate: selectedLocationCoord) {
-                        Label("", systemImage: "mappin")
+        NavigationStack {
+            MapReader { reader in
+                Map {
+                    if let selectedLocationCoord = selectedLocationCoord {
+                        Marker(coordinate: selectedLocationCoord) {
+                            Label("", systemImage: "mappin")
+                        }
+                    }
+                }
+                .onTapGesture(coordinateSpace: .local) { point in
+                    if let coord = reader.convert(point, from: .local) {
+                        selectedLocationCoord = coord
                     }
                 }
             }
-            .onTapGesture(coordinateSpace: .local) { point in
-                if let coord = reader.convert(point, from: .local) {
-                    selectedLocationCoord = coord
+            .onChange(of: viewModel.currentLocationCoord, { _, newValue in
+                selectedLocationCoord = newValue
+            })
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        // TODO: 
+                        dismiss()
+                    } label: {
+                        Image(systemName: "checkmark")
+                    }
                 }
             }
         }
-        .onChange(of: viewModel.currentLocationCoord, { _, newValue in
-            selectedLocationCoord = newValue
-        })
         .task {
             viewModel.loadCurrentLocation()
         }

@@ -16,7 +16,7 @@ struct PlacesListView: View {
         NavigationStack {
             List {
                 ForEach(viewModel.locations, id: \.self) { location in
-                    Text(location.name ?? "unknown")
+                    Text(location.name ?? "untitled")
                         .onTapGesture {
                             viewModel.handleTap(on: location)
                         }

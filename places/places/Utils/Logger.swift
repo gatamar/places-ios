@@ -15,8 +15,12 @@ enum PlacesLogCategory: CustomStringConvertible {
     enum Service: String {
         case currentLocation
     }
+    enum Repository: String {
+        case location
+    }
     case viewModel(ViewModel)
     case navigator
+    case repository(Repository)
     case service(Service)
     
     var description: String {
@@ -25,6 +29,8 @@ enum PlacesLogCategory: CustomStringConvertible {
             return "viewModel.\(model.rawValue)"
         case .navigator:
             return "navigator"
+        case .repository(let repository):
+            return "repository.\(repository.rawValue)"
         case .service(let service):
             return "service.\(service.rawValue)"
         }
