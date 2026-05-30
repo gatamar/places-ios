@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct PlacesListView: View {
-    private let viewModel = PlacesListViewModel()
-
     @State private var isShowingAddPlaceSheet = false
+    @State private var viewModel: PlacesListViewModel
+    private let dependencies: PlacesDependencies
+    init(dependencies: PlacesDependencies) {
+        self.dependencies = dependencies
+        _viewModel = State(initialValue: PlacesListViewModel(dependencies: dependencies))
+    }
 
     var body: some View {
         NavigationStack {
@@ -34,15 +38,11 @@ struct PlacesListView: View {
                 }
             }
             .sheet(isPresented: $isShowingAddPlaceSheet) {
-                AddCustomPlaceView()
+                AddCustomPlaceView(dependencies: dependencies)
             }
         }
         .task {
             await viewModel.fetchData()
         }
     }
-}
-
-#Preview {
-    PlacesListView()
 }

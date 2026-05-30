@@ -10,8 +10,11 @@ import MapKit
 
 struct AddCustomPlaceView: View {
     @Environment(\.dismiss) private var dismiss
-    private let viewModel = AddCustomPlaceViewModel()
     @State private var selectedLocationCoord: CLLocationCoordinate2D?
+    @State private var viewModel: AddCustomPlaceViewModel
+    init(dependencies: PlacesDependencies) {
+        _viewModel = State(initialValue: AddCustomPlaceViewModel(dependencies: dependencies))
+    }
 
     var body: some View {
         NavigationStack {
@@ -42,7 +45,7 @@ struct AddCustomPlaceView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        // TODO: 
+                        viewModel.saveCustomChosenPlace(selectedLocationCoord)
                         dismiss()
                     } label: {
                         Image(systemName: "checkmark")

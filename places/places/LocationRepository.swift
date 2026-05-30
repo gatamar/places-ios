@@ -42,7 +42,8 @@ final class LocationRepositoryImpl: LocationRepository {
     }
     
     func appendCustom(location: Location) {
-        
+        logger.debug("append location")
+        locations.append(location)
     }
 }
 

@@ -9,12 +9,15 @@ import Observation
 import Foundation
 import os
 import UIKit // for UIApplication.shared.openURL
+import SwiftUI
 
 @MainActor @Observable
 final class PlacesListViewModel {
     private let logger = Logger.make(for: .viewModel(.placesList))
-    private let placesNavigator: PlacesNavigator
-    private let locationsRepository: LocationRepository
+    
+    var locationsRepository: LocationRepository {
+        dependencies.locationsRepository
+    }
 
     var locations: [Location] {
         locationsRepository.locations
@@ -23,12 +26,13 @@ final class PlacesListViewModel {
         locationsRepository.latestFetchError?.description
     }
     
-    init(
-        placesNavigator: PlacesNavigator = UIApplication.shared,
-        locationsRepository: LocationRepository = LocationRepositoryImpl()
-    ) {
-        self.placesNavigator = placesNavigator
-        self.locationsRepository = locationsRepository
+    var placesNavigator: PlacesNavigator {
+        dependencies.placesNavigator
+    }
+
+    private let dependencies: PlacesDependencies
+    init(dependencies: PlacesDependencies) {
+        self.dependencies = dependencies
     }
     
     func fetchData() async {
