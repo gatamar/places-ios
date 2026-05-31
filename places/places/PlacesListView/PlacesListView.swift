@@ -21,12 +21,18 @@ struct PlacesListView: View {
             VStack {
                 Text("Welcome to Places!")
                     .font(.largeTitle)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Text("Select a place from the list below to open it in the Wiki app")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
 
                 List {
                     ForEach(viewModel.locations, id: \.self) { location in
                         Text(location.name ?? "untitled")
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .contentShape(Rectangle())
+                            .accessibilityHint("Open \(location.name ?? "untitled") in the Wiki app")
                             .onTapGesture {
                                 viewModel.handleTap(on: location)
                             }
@@ -34,6 +40,7 @@ struct PlacesListView: View {
                 }
                 .listStyle(.plain)
             }
+            .padding()
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
