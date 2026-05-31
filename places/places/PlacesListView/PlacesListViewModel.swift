@@ -13,29 +13,29 @@ import SwiftUI
 
 @MainActor @Observable
 final class PlacesListViewModel {
-    private let logger = Logger.make(for: .viewModel(.placesList))
-    
-    var locationsRepository: LocationRepository {
-        dependencies.locationsRepository
-    }
-
+    private(set) var isFetchingData: Bool = false
     var locations: [Location] {
         locationsRepository.locations.sorted()
     }
     var userFacingError: UserFacingError?
     
-    var placesNavigator: PlacesNavigator {
+    private let logger = Logger.make(for: .viewModel(.placesList))
+    private var locationsRepository: LocationRepository {
+        dependencies.locationsRepository
+    }
+    private var placesNavigator: PlacesNavigator {
         dependencies.placesNavigator
     }
-
     private let dependencies: PlacesDependencies
     init(dependencies: PlacesDependencies) {
         self.dependencies = dependencies
     }
     
     func fetchData() async {
+        isFetchingData = true
         observeLocationRepoErrors()
         await locationsRepository.fetchFromBackend()
+        isFetchingData = false
     }
     
     func handleTap(on location: Location) {

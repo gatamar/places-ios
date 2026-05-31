@@ -23,22 +23,30 @@ struct PlacesListView: View {
                     .font(.largeTitle)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Text("Select a place from the list below to open it in the Wiki app")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-
-                List {
-                    ForEach(viewModel.locations, id: \.self) { location in
-                        Text(location.name ?? "untitled")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
-                            .accessibilityHint("Open \(location.name ?? "untitled") in the Wiki app")
-                            .onTapGesture {
-                                viewModel.handleTap(on: location)
-                            }
+                if viewModel.isFetchingData {
+                    VStack {
+                        ProgressView("Loading places...")
+                        Spacer()
                     }
+                    .padding()
+                } else {
+                    Text("Select a place from the list below to open it in the Wiki app")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+
+                    List {
+                        ForEach(viewModel.locations, id: \.self) { location in
+                            Text(location.name ?? "untitled")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
+                                .accessibilityHint("Open \(location.name ?? "untitled") in the Wiki app")
+                                .onTapGesture {
+                                    viewModel.handleTap(on: location)
+                                }
+                        }
+                    }
+                    .listStyle(.plain)
                 }
-                .listStyle(.plain)
             }
             .padding()
             .toolbar {
