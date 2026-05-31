@@ -18,18 +18,22 @@ struct PlacesListView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(viewModel.locations, id: \.self) { location in
-                    Text(location.name ?? "untitled")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            viewModel.handleTap(on: location)
-                        }
+            VStack {
+                Text("Welcome to Places!")
+                    .font(.largeTitle)
+
+                List {
+                    ForEach(viewModel.locations, id: \.self) { location in
+                        Text(location.name ?? "untitled")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                viewModel.handleTap(on: location)
+                            }
+                    }
                 }
+                .listStyle(.plain)
             }
-            .padding()
-            .navigationTitle("Welcome to Places!")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
