@@ -42,6 +42,7 @@ struct AddCustomPlaceView: View {
                     } label: {
                         Image(systemName: "xmark")
                     }
+                    .accessibilityLabel("Cancel")
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
@@ -49,7 +50,9 @@ struct AddCustomPlaceView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "checkmark")
+                            
                     }
+                    .accessibilityLabel("Save place")
                 }
             }
         }
