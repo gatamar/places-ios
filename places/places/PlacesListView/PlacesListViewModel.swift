@@ -20,7 +20,7 @@ final class PlacesListViewModel {
     }
 
     var locations: [Location] {
-        locationsRepository.locations
+        locationsRepository.locations.sorted()
     }
     var userFacingError: UserFacingError?
     

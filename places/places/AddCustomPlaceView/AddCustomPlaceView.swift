@@ -19,7 +19,10 @@ struct AddCustomPlaceView: View {
     var body: some View {
         NavigationStack {
             MapReader { reader in
-                Map {
+                Map(
+                    bounds: .cityLevelZoom,
+                    interactionModes: [.pan, .zoom]
+                ) {
                     if let selectedLocationCoord = selectedLocationCoord {
                         Marker(coordinate: selectedLocationCoord) {
                             Label("", systemImage: "mappin")
@@ -65,5 +68,11 @@ struct AddCustomPlaceView: View {
 extension CLLocationCoordinate2D: @retroactive Equatable {
     public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
         lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+}
+
+private extension MapCameraBounds {
+    static var cityLevelZoom: Self {
+        .init(minimumDistance: 15_000)
     }
 }
