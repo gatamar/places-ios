@@ -15,32 +15,22 @@ protocol LocationNameDetector {
 
 final class LocationNameDetectorImpl: LocationNameDetector {
     private let logger = Logger.make(for: .service(.nameDetector))
-    private let geocoder = CLGeocoder()
     
     func detectLocationName(by coord: CLLocationCoordinate2D) async -> String? {
-        logger.debug("start reverse geocoding")
-        var placemark: CLPlacemark?
-        do {
-            placemark = try await geocoder.reverseGeocodeLocation(
-                .init(
-                    latitude: coord.latitude,
-                    longitude: coord.longitude
-                )
-            ).first
-        } catch {
-            logger.error("failed to perform reverse geocoding: \(error)")
-        }
-        
-        return placemark?.locality
+        await CLGeocoder().detectLocationName(by: coord, logger: logger)
     }
     
     func detectNames(for locations: [Location]) async -> [Location] {
         guard !locations.isEmpty else { return [] }
         return await withTaskGroup(of: Location.self) { group in
             for location in locations {
-                group.addTask { [weak self] in
-                    guard let self else { return location }
-                    let name = await self.detectLocationName(by: .init(with: location))
+                group.addTask { [logger] in
+                    logger.debug("add a new task")
+
+                    let name = await CLGeocoder().detectLocationName(
+                        by: .init(with: location),
+                        logger: logger
+                    )
                     return Location(
                         id: location.id,
                         name: name,
@@ -58,5 +48,27 @@ final class LocationNameDetectorImpl: LocationNameDetector {
 
             return detected
         }
+    }
+}
+
+private extension CLGeocoder {
+    func detectLocationName(
+        by coord: CLLocationCoordinate2D,
+        logger: os.Logger
+    ) async -> String? {
+        logger.debug("start reverse geocoding")
+        var placemark: CLPlacemark?
+        do {
+            placemark = try await reverseGeocodeLocation(
+                .init(
+                    latitude: coord.latitude,
+                    longitude: coord.longitude
+                )
+            ).first
+        } catch {
+            logger.error("failed to perform reverse geocoding: \(error)")
+        }
+        
+        return placemark?.locality
     }
 }
