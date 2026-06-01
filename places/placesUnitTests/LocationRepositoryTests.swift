@@ -36,6 +36,16 @@ final class LocationRepositoryTests: XCTestCase {
         }
         XCTAssertEqual(sut.locations.count, 0)
     }
+    
+    func testUpdateExisting() async {
+        locationAPI.stubbedResult = .success([.init(name: "test1", lat: 0.1, long: 0.2)])
+        await sut.fetchFromBackend()
+        var locations = sut.locations.map { $0.withUpdatedName("test2") }
+        sut.updateExisting(locations: locations)
+        XCTAssertEqual(sut.locations.count, 1)
+        XCTAssertEqual(sut.locations[0].name, "test2")
+        XCTAssertEqualWithAccuracy(sut.locations[0].latitude, 0.1, accuracy: 0.0001)
+    }
 }
 
 private final class LocationsAPIMock: LocationsAPI {

@@ -40,13 +40,7 @@ final class LocationNameDetectorImpl: LocationNameDetector {
                         by: .init(with: location),
                         logger: logger
                     )
-                    return Location(
-                        id: location.id,
-                        name: name,
-                        latitude: location.latitude,
-                        longitude: location.longitude,
-                        isCustom: location.isCustom
-                    )
+                    return location.withUpdatedName(name)
                 }
             }
             var detected = [Location]()

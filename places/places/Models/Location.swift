@@ -24,3 +24,15 @@ extension CLLocationCoordinate2D {
         )
     }
 }
+
+extension Location {
+    func withUpdatedName(_ name: String?) -> Self {
+        .init(
+            id: self.id,
+            name: name,
+            latitude: self.latitude,
+            longitude: self.longitude,
+            isCustom: self.isCustom
+        )
+    }
+}
