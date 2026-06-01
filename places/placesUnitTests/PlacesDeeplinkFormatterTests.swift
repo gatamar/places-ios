@@ -10,7 +10,7 @@ import XCTest
 
 final class PlacesDeeplinkFormatterTests: XCTestCase {
     func testDeeplinkConstruction() throws {
-        let location = Location(name: "Test", latitude: 0.00023, longitude: -0.040, isCustom: false)
+        let location = Location(id: "test", name: "Test", latitude: 0.00023, longitude: -0.040, isCustom: false)
         let url = PlacesDeeplinkFormatter.makeDeeplinkURL(for: location)
         XCTAssertEqual(
             url.absoluteString,

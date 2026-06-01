@@ -14,6 +14,9 @@ protocol LocationNameDetector {
 }
 
 final class LocationNameDetectorImpl: LocationNameDetector {
+    private enum Constants {
+        static let maxConcurrentGeocodeTasks = 4
+    }
     private let logger = Logger.make(for: .service(.nameDetector))
     
     func detectLocationName(by coord: CLLocationCoordinate2D) async -> String? {
@@ -23,7 +26,13 @@ final class LocationNameDetectorImpl: LocationNameDetector {
     func detectNames(for locations: [Location]) async -> [Location] {
         guard !locations.isEmpty else { return [] }
         return await withTaskGroup(of: Location.self) { group in
+            var addedTasks = 0
             for location in locations {
+                if addedTasks > Constants.maxConcurrentGeocodeTasks {
+                    logger.debug("task cap reached, await for the next one")
+                    _ = await group.next()
+                }
+                addedTasks += 1
                 group.addTask { [logger] in
                     logger.debug("add a new task")
 
