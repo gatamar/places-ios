@@ -16,7 +16,10 @@ final class PlacesNavigatorImpl: PlacesNavigator {
     private let logger = Logger.make(for: .navigator)
 
     func openPlace(_ location: Location) -> Bool {
-        let url = PlacesDeeplinkFormatter.makeDeeplinkURL(for: location)
+        guard let url = PlacesDeeplinkFormatter.makeDeeplinkURL(for: location) else {
+            logger.error("Failed to create a deeplink url")
+            return false
+        }
 
         guard UIApplication.shared.canOpenURL(url) else {
             logger.error("Deeplink not supported: \(url)")

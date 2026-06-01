@@ -8,7 +8,7 @@
 import Foundation
 
 enum PlacesDeeplinkFormatter {
-    static func makeDeeplinkURL(for location: Location) -> URL {
+    static func makeDeeplinkURL(for location: Location) -> URL? {
         var wiki = URLComponents()
         wiki.scheme = "wikipedia"
         wiki.host = "places"
@@ -19,7 +19,7 @@ enum PlacesDeeplinkFormatter {
         wiki.queryItems = [
             URLQueryItem(name: "WMFCoord", value: coord.query)
         ]
-        let url = wiki.url!
+        let url = wiki.url
         return url
     }
 }

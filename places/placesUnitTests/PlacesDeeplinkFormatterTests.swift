@@ -11,7 +11,7 @@ import XCTest
 final class PlacesDeeplinkFormatterTests: XCTestCase {
     func testDeeplinkConstruction() throws {
         let location = Location(id: "test", name: "Test", latitude: 0.00023, longitude: -0.040, isCustom: false)
-        let url = PlacesDeeplinkFormatter.makeDeeplinkURL(for: location)
+        let url = try XCTUnwrap(PlacesDeeplinkFormatter.makeDeeplinkURL(for: location))
         XCTAssertEqual(
             url.absoluteString,
             "wikipedia://places?WMFCoord=lat%3D0.00023%26long%3D-0.04%26name%3DTest"
