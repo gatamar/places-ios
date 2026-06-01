@@ -16,7 +16,7 @@ final class PlacesDependencies {
     
     init(
         locationsRepository: LocationRepository = LocationRepositoryImpl(),
-        placesNavigator: PlacesNavigator = UIApplication.shared,
+        placesNavigator: PlacesNavigator = PlacesNavigatorImpl(),
         currentLocationService: CurrentLocationService = CurrentLocationServiceImpl(),
         locationNameDetector: LocationNameDetector = LocationNameDetectorImpl()
     ) {
@@ -24,20 +24,5 @@ final class PlacesDependencies {
         self.placesNavigator = placesNavigator
         self.currentLocationService = currentLocationService
         self.locationNameDetector = locationNameDetector
-    }
-}
-
-private let logger = Logger.make(for: .navigator)
-extension UIApplication: PlacesNavigator {
-    func openPlace(_ location: Location) -> Bool {
-        let url = PlacesDeeplinkFormatter.makeDeeplinkURL(for: location)
-        guard canOpenURL(url) else {
-            logger.error("Deeplink not supported: \(url)")
-            return false
-        }
-        logger.debug("Opening deeplink: \(url)")
-                
-        open(url)
-        return true
     }
 }

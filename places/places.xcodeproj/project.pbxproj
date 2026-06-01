@@ -21,9 +21,22 @@
 		4F809A542FC8C21000BA5649 /* placesUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = placesUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4F809ABF2FCE0DBC00BA5649 /* Exceptions for "places" folder in "places" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4F8099B32FC75F9A00BA5649 /* places */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4F8099B62FC75F9A00BA5649 /* places */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4F809ABF2FCE0DBC00BA5649 /* Exceptions for "places" folder in "places" target */,
+			);
 			path = places;
 			sourceTree = "<group>";
 		};
@@ -331,6 +344,7 @@
 				DEVELOPMENT_TEAM = R2TCFS5TSV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = places/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We ask for your location only when you decide to add a custom place!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -364,6 +378,7 @@
 				DEVELOPMENT_TEAM = R2TCFS5TSV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = places/Info.plist;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We ask for your location only when you decide to add a custom place!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
