@@ -13,9 +13,14 @@ import os
 @MainActor @Observable
 final class AddCustomPlaceViewModel {
     private let logger = Logger.make(for: .viewModel(.addCustomPlace))
+    private var nameDetectionTask: Task<Void, Never>?
 
-    @MainActor var currentLocationCoord: CLLocationCoordinate2D? {
-        currentLocationService.currentLocationCoord
+    private(set) var selectedCity: String?
+    var selectedLocationCoord: CLLocationCoordinate2D? {
+        didSet {
+            selectedCity = nil
+            detectNameOfSelectedCity()
+        }
     }
     private var locationsRepository: LocationRepository {
         dependencies.locationsRepository
@@ -33,11 +38,25 @@ final class AddCustomPlaceViewModel {
 
     func loadCurrentLocation() {
         currentLocationService.startDetectingCurrentLocation()
+        
+        withObservationTracking({
+            _ = currentLocationService.currentLocationCoord
+        }, onChange: {
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                if selectedLocationCoord == nil {
+                    logger.debug("setting selected location to the current one")
+                    selectedLocationCoord = currentLocationService.currentLocationCoord
+                } else {
+                    logger.debug("ignoring current detected location because the user was faster")
+                }
+            }
+        })
     }
     
-    func saveCustomChosenPlace(_ coord: CLLocationCoordinate2D?) {
+    func saveSelectedPlace() {
         Task {
-            await saveCustomChosenPlaceAsync(coord)
+            await saveCustomChosenPlaceAsync(selectedLocationCoord)
         }
     }
 
@@ -50,6 +69,20 @@ final class AddCustomPlaceViewModel {
         let name = await locationNameDetector.detectLocationName(by: coord)
         locationsRepository.appendCustom(location: Location(coord, name: name))
         logger.debug("custom place saved")
+    }
+    
+    private func detectNameOfSelectedCity() {
+        guard let coord = selectedLocationCoord else { return }
+        if nameDetectionTask != nil {
+            logger.debug("cancelling the existing task in favour of the new one")
+            nameDetectionTask?.cancel()
+        }
+        nameDetectionTask = Task { [weak self] in
+            guard let self else { return }
+            let name = await self.locationNameDetector.detectLocationName(by: coord)
+            self.selectedCity = name
+            self.nameDetectionTask = nil
+        }
     }
 }
 

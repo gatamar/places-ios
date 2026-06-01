@@ -10,7 +10,6 @@ import MapKit
 
 struct AddCustomPlaceView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedLocationCoord: CLLocationCoordinate2D?
     @State private var viewModel: AddCustomPlaceViewModel
     init(dependencies: PlacesDependencies) {
         _viewModel = State(initialValue: AddCustomPlaceViewModel(dependencies: dependencies))
@@ -23,21 +22,18 @@ struct AddCustomPlaceView: View {
                     bounds: .cityLevelZoom,
                     interactionModes: [.pan, .zoom]
                 ) {
-                    if let selectedLocationCoord = selectedLocationCoord {
+                    if let selectedLocationCoord = viewModel.selectedLocationCoord {
                         Marker(coordinate: selectedLocationCoord) {
-                            Label("", systemImage: "mappin")
+                            Label("\(viewModel.selectedCity ?? "")", systemImage: "mappin")
                         }
                     }
                 }
                 .onTapGesture(coordinateSpace: .local) { point in
                     if let coord = reader.convert(point, from: .local) {
-                        selectedLocationCoord = coord
+                        viewModel.selectedLocationCoord = coord
                     }
                 }
             }
-            .onChange(of: viewModel.currentLocationCoord, { _, newValue in
-                selectedLocationCoord = newValue
-            })
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -49,7 +45,7 @@ struct AddCustomPlaceView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        viewModel.saveCustomChosenPlace(selectedLocationCoord)
+                        viewModel.saveSelectedPlace()
                         dismiss()
                     } label: {
                         Image(systemName: "checkmark")
