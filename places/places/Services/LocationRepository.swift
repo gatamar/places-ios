@@ -7,6 +7,7 @@
 
 import os
 import Observation
+import Foundation
 
 protocol LocationRepository: Observable {
     var locations: [Location] { get }
@@ -14,6 +15,7 @@ protocol LocationRepository: Observable {
 
     func fetchFromBackend() async
     func appendCustom(location: Location)
+    func updateExisting(locations: [Location])
 }
 
 @Observable
@@ -45,11 +47,22 @@ final class LocationRepositoryImpl: LocationRepository {
         logger.debug("append location")
         locations.append(location)
     }
+    
+    func updateExisting(locations: [Location]) {
+        logger.debug("update existing")
+        
+        for location in locations {
+            if let index = self.locations.firstIndex(where: { $0.id == location.id}) {
+                self.locations[index] = location
+            }
+        }
+    }
 }
 
 private extension Location {
     init(with dto: LocationDTO) {
         self.init(
+            id: UUID().uuidString,
             name: dto.name,
             latitude: dto.lat,
             longitude: dto.long,

@@ -10,12 +10,15 @@ import Foundation
 import os
 import UIKit // for UIApplication.shared.openURL
 import SwiftUI
+import CoreLocation
 
 @MainActor @Observable
 final class PlacesListViewModel {
     private(set) var isFetchingData: Bool = false
     var locations: [Location] {
-        locationsRepository.locations.sorted()
+        locationsRepository.locations
+            .filter { $0.name != nil }
+            .sorted()
     }
     var userFacingError: UserFacingError?
     
@@ -26,16 +29,28 @@ final class PlacesListViewModel {
     private var placesNavigator: PlacesNavigator {
         dependencies.placesNavigator
     }
+    private var locationNameDetector: LocationNameDetector {
+        dependencies.locationNameDetector
+    }
     private let dependencies: PlacesDependencies
     init(dependencies: PlacesDependencies) {
         self.dependencies = dependencies
     }
     
+    func name(for location: Location) -> String {
+        guard let name = location.name else {
+            logger.error("location name missing: lat=\(location.latitude) long=\(location.longitude) isCustom=\(location.isCustom)")
+            return "untitled"
+        }
+        return name
+    }
+
     func fetchData() async {
         isFetchingData = true
         observeLocationRepoErrors()
         await locationsRepository.fetchFromBackend()
         isFetchingData = false
+        await backfillUnnamedLocationsIfNeeded()
     }
     
     func handleTap(on location: Location) {
@@ -47,7 +62,7 @@ final class PlacesListViewModel {
     }
     
     // MARK: Private
-    func observeLocationRepoErrors() {
+    private func observeLocationRepoErrors() {
         withObservationTracking {
             _ = locationsRepository.latestFetchError
         } onChange: {
@@ -62,7 +77,16 @@ final class PlacesListViewModel {
                 self.observeLocationRepoErrors()
             }
         }
-
+    }
+    
+    private func backfillUnnamedLocationsIfNeeded() async {
+        let locationsToBackfill = locationsRepository.locations
+            .filter {
+                $0.name == nil
+                && !$0.isCustom // custom locations should have reverse geocoding applied
+            }
+        let backfilled = await locationNameDetector.detectNames(for: locationsToBackfill)
+        locationsRepository.updateExisting(locations: backfilled)
     }
 }
 

@@ -36,10 +36,11 @@ struct PlacesListView: View {
 
                     List {
                         ForEach(viewModel.locations, id: \.self) { location in
-                            Text(location.name ?? "untitled")
+                            let locationName = viewModel.name(for: location)
+                            return Text(locationName)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .contentShape(Rectangle())
-                                .accessibilityHint("Open \(location.name ?? "untitled") in the Wiki app")
+                                .accessibilityHint("Open \(locationName) in the Wiki app")
                                 .onTapGesture {
                                     viewModel.handleTap(on: location)
                                 }

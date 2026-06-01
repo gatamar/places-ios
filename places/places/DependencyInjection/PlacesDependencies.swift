@@ -12,15 +12,18 @@ final class PlacesDependencies {
     let locationsRepository: LocationRepository
     let placesNavigator: PlacesNavigator
     let currentLocationService: CurrentLocationService
+    let locationNameDetector: LocationNameDetector
     
     init(
         locationsRepository: LocationRepository = LocationRepositoryImpl(),
         placesNavigator: PlacesNavigator = UIApplication.shared,
-        currentLocationService: CurrentLocationService = CurrentLocationServiceImpl()
+        currentLocationService: CurrentLocationService = CurrentLocationServiceImpl(),
+        locationNameDetector: LocationNameDetector = LocationNameDetectorImpl()
     ) {
         self.locationsRepository = locationsRepository
         self.placesNavigator = placesNavigator
         self.currentLocationService = currentLocationService
+        self.locationNameDetector = locationNameDetector
     }
 }
 

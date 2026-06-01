@@ -14,6 +14,7 @@ enum PlacesLogCategory: CustomStringConvertible {
     }
     enum Service: String {
         case currentLocation
+        case nameDetector
     }
     enum Repository: String {
         case location

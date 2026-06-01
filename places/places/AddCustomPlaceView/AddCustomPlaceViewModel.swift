@@ -14,25 +14,25 @@ import os
 final class AddCustomPlaceViewModel {
     private let logger = Logger.make(for: .viewModel(.addCustomPlace))
 
-    @MainActor var currentLocationCoord: CLLocationCoordinate2D {
-        service.currentLocationCoord
+    @MainActor var currentLocationCoord: CLLocationCoordinate2D? {
+        currentLocationService.currentLocationCoord
     }
-    
     private var locationsRepository: LocationRepository {
         dependencies.locationsRepository
     }
-
-    private var service: CurrentLocationService {
+    private var locationNameDetector: LocationNameDetector {
+        dependencies.locationNameDetector
+    }
+    private var currentLocationService: CurrentLocationService {
         dependencies.currentLocationService
     }
-
     private let dependencies: PlacesDependencies
     init(dependencies: PlacesDependencies) {
         self.dependencies = dependencies
     }
 
     func loadCurrentLocation() {
-        service.startDetectingCurrentLocation()
+        currentLocationService.startDetectingCurrentLocation()
     }
     
     func saveCustomChosenPlace(_ coord: CLLocationCoordinate2D?) {
@@ -47,7 +47,7 @@ final class AddCustomPlaceViewModel {
             logger.error("nothing to save")
             return
         }
-        let name = await service.detectLocationName(by: coord)
+        let name = await locationNameDetector.detectLocationName(by: coord)
         locationsRepository.appendCustom(location: Location(coord, name: name))
         logger.debug("custom place saved")
     }
@@ -56,6 +56,7 @@ final class AddCustomPlaceViewModel {
 private extension Location {
     init(_ coord: CLLocationCoordinate2D, name: String?) {
         self.init(
+            id: UUID().uuidString,
             name: name,
             latitude: coord.latitude,
             longitude: coord.longitude,
