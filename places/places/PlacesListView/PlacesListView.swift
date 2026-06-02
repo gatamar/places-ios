@@ -44,6 +44,7 @@ struct PlacesListView: View {
                                 Text("\(String(format: "%.4f", location.longitude)), \(String(format: "%.4f", location.latitude))")
                                     .font(.caption2)
                                     .foregroundStyle(.secondary)
+                                    .accessibilityHidden(true)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .contentShape(Rectangle())
