@@ -28,8 +28,7 @@ private extension Location {
     var toQueryItems: [URLQueryItem] {
         [
             URLQueryItem(name: "lat", value: String(latitude)),
-            URLQueryItem(name: "long", value: String(longitude)),
-            name.flatMap { URLQueryItem(name: "name", value: $0) }
+            URLQueryItem(name: "long", value: String(longitude))
         ].compactMap { $0 }
     }
 }
