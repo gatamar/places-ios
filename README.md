@@ -2,42 +2,42 @@
 
 This is the SwiftUI's Places test assignment app.
 
-For the Wikipedia tweak app, see:
-https://github.com/gatamar/wikipedia-ios branch `places-app-deeplink-support`.
+For the Wikipedia tweak app, see
+https://github.com/gatamar/wikipedia-ios (branch `places-app-deeplink-support`)
 
 You can also read the diff here: https://github.com/gatamar/wikipedia-ios/compare/main...places-app-deeplink-support
 
 ## Architecture
 
-+ `MVVM` with some elements of clean architecture is used
-+ instead of `Published`+`Combine`, Apple-recommended `Observation` framework is used for ViewModels
-+ SwiftUI's navigation is used, which leads to the DI issue below 
-+ dependencies are declared at the app's root; they are injected explicitly into each View/ViewModel which needs them; SwiftUI's `Environment` should probably have been used, but I haven't found an elegant way to properly pass those from a `View` to `ViewModel`, given `ViewModel`'s are owned and created by `View`s in this app.
++ `MVVM` with some elements of clean architecture is used.
++ Instead of `Published`+`Combine`, Apple-recommended `Observation` framework is used for ViewModels.
++ SwiftUI's navigation is used. 
++ Dependencies are declared at the app's root; they are injected explicitly into each View/ViewModel which needs them. SwiftUI's `Environment` should probably have been used, but I haven't found an elegant way to properly pass those from a `View` to `ViewModel`, given `ViewModel`'s are owned and created by `View`s in this app.
 
 ## The Deeplink Scheme
 
 `wikipedia://places` scheme is reused, with `WMFCoord` query item name introduced.
-`Places` app's coordinates are passed as a URL-encoded `WMFCoord` query item value.
+`Places` app's coordinates are passed as a URL-encoded `WMFCoord` query item values.
 
-E.g. for Amsterdam record the deeplink is wikipedia://places?WMFCoord=lat%3D52.3547498%26long%3D4.8339215
+E.g. for Amsterdam record the deeplink is `wikipedia://places?WMFCoord=lat%3D52.3547498%26long%3D4.8339215`.
 
-That logic is contained in `PlacesDeeplinkFormatter`.
+The deeplink construction logic is owned by `PlacesDeeplinkFormatter`.
 
 ## Accessibility
 
 ### Dynamic Type
 
 Supported by the standard `SwiftUI` components like `Text`.
-```
+```swift
 Text("Welcome to Places!")
 	.font(.largeTitle)
 ```
-has been used instead of ``.navigationTitle("Welcome to Places!")` in order for the text not to be truncated when the font size is large.
+has been used instead of `.navigationTitle("Welcome to Places!")` in order for the text not to be truncated when the font size is large.
 
 ### Dark Mode
 
 + supported by the standard `SwiftUI` components
-+ no custom colors was used, and `.foregroundStyle(.secondary)` works well in the Dark Mode
++ no custom colors were used, and `.foregroundStyle(.secondary)` works well in the Dark Mode
 
 ### VoiceOver
 
@@ -52,10 +52,10 @@ has been used instead of ``.navigationTitle("Welcome to Places!")` in order for 
 
 + `Task`, `async`/`await`
 + SwiftUI View's `.task` modifier
-+ `TaskGroup` with a custom cap for the efficient backfill of unnamed locations
++ `TaskGroup` with a custom cap for an efficient client backfill of unnamed locations
 + `SWIFT_DEFAULT_ACTOR_ISOLATION` is `nonisolated` as opposed to Swift6-migration-related `MainActor`
 
-While it's possible to use the `AsyncStream` to observe the LocationRepository updates in a reactive fashion, a simpler (and uglier, but recommended by Apple) Observation framework is used instead.
+While it's possible to use the `AsyncStream` to observe the `LocationRepository` updates in a reactive fashion, a simpler (and uglier, but [recommended](https://github.com/swiftlang/swift-evolution/blob/main/proposals/0395-observability.md) by Apple) `Observation` framework is used instead.
 
 ## Known issues
 
