@@ -42,9 +42,11 @@ final class CurrentLocationServiceImpl: NSObject, CurrentLocationService, CLLoca
         guard let receivedLocation = locations.first?.coordinate else {
             return
         }
-        currentLocationCoord = receivedLocation
-        logger.debug("stop updating current location")
-        locationManager.stopUpdatingLocation()
+        Task { @MainActor in
+            currentLocationCoord = receivedLocation
+            logger.debug("stop updating current location")
+            locationManager.stopUpdatingLocation()
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
