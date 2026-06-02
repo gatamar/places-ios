@@ -37,13 +37,20 @@ struct PlacesListView: View {
                     List {
                         ForEach(viewModel.locations, id: \.self) { location in
                             let locationName = viewModel.name(for: location)
-                            return Text(locationName)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .contentShape(Rectangle())
-                                .accessibilityHint("Open \(locationName) in the Wiki app")
-                                .onTapGesture {
-                                    viewModel.handleTap(on: location)
-                                }
+                            
+                            VStack(alignment: .leading) {
+                                Text(locationName)
+                                
+                                Text("\(String(format: "%.4f", location.longitude)), \(String(format: "%.4f", location.latitude))")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                            .accessibilityHint("Open \(locationName) in the Wiki app")
+                            .onTapGesture {
+                                viewModel.handleTap(on: location)
+                            }
                         }
                     }
                     .listStyle(.plain)
