@@ -75,4 +75,3 @@ While it's possible to use the `AsyncStream` to observe the `LocationRepository`
 ### tech debt
 
 + a deprecated `CLGeocoder` API is used because of its simplicity
-+ `LocationRepositoryTests` have a lot of `Main actor-isolated property 'locations' can not be referenced from a nonisolated autoclosure` warnings. While this is easily fixed by annotating a test case with `@MainActor`, I didn't do that because the repo isn't a MainActor entity.
