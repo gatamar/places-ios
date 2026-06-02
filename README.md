@@ -41,10 +41,14 @@ Text("Welcome to Places!")
 ```
 has been used instead of `.navigationTitle("Welcome to Places!")` in order for the text not to be truncated when the font size is large.
 
+![Navigation title](docs/images/accessibility/navigation-title.png)
+
 ### Dark Mode
 
 + supported by the standard `SwiftUI` components
 + no custom colors were used, and `.foregroundStyle(.secondary)` works well in the Dark Mode
+
+![Dark mode](docs/images/accessibility/dark-mode.png)
 
 ### VoiceOver
 
