@@ -54,21 +54,17 @@ final class AddCustomPlaceViewModel {
         })
     }
     
-    func saveSelectedPlace() {
-        Task {
-            await saveCustomChosenPlaceAsync(selectedLocationCoord)
-        }
-    }
-
-    private func saveCustomChosenPlaceAsync(_ coord: CLLocationCoordinate2D?) async {
+    func saveSelectedPlace() async -> Location? {
         logger.debug("save custom place")
-        guard let coord else {
+        guard let coord = selectedLocationCoord else {
             logger.error("nothing to save")
-            return
+            return nil
         }
         let name = await locationNameDetector.detectLocationName(by: coord)
-        locationsRepository.appendCustom(location: Location(coord, name: name))
+        let location = Location(coord, name: name)
+        locationsRepository.appendCustom(location: location)
         logger.debug("custom place saved")
+        return location
     }
     
     private func detectNameOfSelectedCity() {

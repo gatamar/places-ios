@@ -11,8 +11,13 @@ import MapKit
 struct AddCustomPlaceView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: AddCustomPlaceViewModel
-    init(dependencies: PlacesDependencies) {
+    private let onSave: (Location?) -> Void
+    init(
+        dependencies: PlacesDependencies,
+        onSave: @escaping (Location?) -> Void
+    ) {
         _viewModel = State(initialValue: AddCustomPlaceViewModel(dependencies: dependencies))
+        self.onSave = onSave
     }
 
     var body: some View {
@@ -45,13 +50,17 @@ struct AddCustomPlaceView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        viewModel.saveSelectedPlace()
-                        dismiss()
+                        Task {
+                            let savedLocation = await viewModel.saveSelectedPlace()
+                            dismiss()
+                            onSave(savedLocation)
+                        }
                     } label: {
                         Image(systemName: "checkmark")
                             
                     }
                     .accessibilityLabel("Save place")
+                    .disabled(viewModel.selectedLocationCoord == nil)
                 }
             }
         }
