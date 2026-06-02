@@ -78,7 +78,7 @@ struct PlacesListView: View {
                         isShowingAddPlaceSheet = true
                     } label: {
                         Image(systemName: "plus")
-                            .accessibilityLabel("Add another place")
+                            .accessibilityLabel("Choose another place")
                             .accessibilityHint("Select a place on the map")
                     }
                 }

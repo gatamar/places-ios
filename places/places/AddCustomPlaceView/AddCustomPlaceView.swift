@@ -59,8 +59,10 @@ struct AddCustomPlaceView: View {
                         Image(systemName: "checkmark")
                             
                     }
-                    .accessibilityLabel("Save place")
                     .disabled(viewModel.selectedLocationCoord == nil)
+                    .accessibilityHidden(viewModel.selectedLocationCoord == nil)
+                    .accessibilityLabel("Choose \(viewModel.selectedCity ?? "place")")
+                    .accessibilityHint("Complete custom location selection")
                 }
             }
         }

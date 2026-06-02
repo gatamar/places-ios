@@ -2,10 +2,17 @@
 
 This is the SwiftUI's Places test assignment app.
 
+## Modified Wikipedia app
+
 For the Wikipedia tweak app, see
 https://github.com/gatamar/wikipedia-ios (branch `places-app-deeplink-support`)
 
 You can also read the diff here: https://github.com/gatamar/wikipedia-ios/compare/main...places-app-deeplink-support
+
+## Requirements
+
++ **Xcode 26+** (Xcode 26.3 for sure)
++ **iOS 26+**
 
 ## Architecture
 
