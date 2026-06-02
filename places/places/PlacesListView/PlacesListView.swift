@@ -34,27 +34,41 @@ struct PlacesListView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
 
-                    List {
-                        ForEach(viewModel.locations, id: \.self) { location in
-                            let locationName = viewModel.name(for: location)
-                            
-                            VStack(alignment: .leading) {
-                                Text(locationName)
+                    if !viewModel.locations.isEmpty {
+                        List {
+                            ForEach(viewModel.locations, id: \.self) { location in
+                                let locationName = viewModel.name(for: location)
                                 
-                                Text("\(String(format: "%.4f", location.longitude)), \(String(format: "%.4f", location.latitude))")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-                                    .accessibilityHidden(true)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
-                            .accessibilityHint("Open \(locationName) in the Wiki app")
-                            .onTapGesture {
-                                viewModel.handleTap(on: location)
+                                VStack(alignment: .leading) {
+                                    Text(locationName)
+                                    
+                                    Text("\(String(format: "%.4f", location.longitude)), \(String(format: "%.4f", location.latitude))")
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                        .accessibilityHidden(true)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
+                                .accessibilityHint("Open \(locationName) in the Wiki app")
+                                .onTapGesture {
+                                    viewModel.handleTap(on: location)
+                                }
                             }
                         }
+                        .listStyle(.plain)
+                    } else {
+                        VStack {
+                            Button {
+                                Task {
+                                    await viewModel.fetchData()
+                                }
+                            } label: {
+                                Text("Tap to refresh places list")
+                            }
+                            Spacer()
+                        }
+                        .padding()
                     }
-                    .listStyle(.plain)
                 }
             }
             .padding()

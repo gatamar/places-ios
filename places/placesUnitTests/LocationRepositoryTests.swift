@@ -24,6 +24,15 @@ final class LocationRepositoryTests: XCTestCase {
         XCTAssertEqual(sut.locations.count, 1)
     }
     
+    func testFetchFromBackendSuccessDoesntEraseExistingCustomLocations() async {
+        await sut.appendCustom(location: .init(id: "test", name: "", latitude: 0, longitude: 0, isCustom: true))
+        XCTAssertEqual(sut.locations.count, 1)
+        locationAPI.stubbedResult = .success([.mock])
+        await sut.fetchFromBackend()
+        XCTAssertNil(sut.latestFetchError)
+        XCTAssertEqual(sut.locations.count, 2)
+    }
+    
     func testFetchFromBackendFailure() async throws {
         locationAPI.stubbedResult = .failure(.network(CancellationError()))
         await sut.fetchFromBackend()
@@ -37,6 +46,15 @@ final class LocationRepositoryTests: XCTestCase {
         XCTAssertEqual(sut.locations.count, 0)
     }
     
+    func testFetchFromBackendFailureDoesntEraseExistingCustomLocations() async {
+        await sut.appendCustom(location: .init(id: "test", name: "", latitude: 0, longitude: 0, isCustom: true))
+        XCTAssertEqual(sut.locations.count, 1)
+        locationAPI.stubbedResult = .failure(.network(CancellationError()))
+        await sut.fetchFromBackend()
+        XCTAssertNotNil(sut.latestFetchError)
+        XCTAssertEqual(sut.locations.count, 1)
+    }
+
     func testUpdateExisting() async {
         locationAPI.stubbedResult = .success([.init(name: "test1", lat: 0.1, long: 0.2)])
         await sut.fetchFromBackend()

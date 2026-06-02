@@ -34,12 +34,11 @@ final class LocationRepositoryImpl: LocationRepository {
         switch await api.fetch() {
         case .success(let locations):
             logger.debug("data fetched successfully")
-            self.locations = locations.map(Location.init)
+            self.locations = self.locations.filter { $0.isCustom } + locations.map(Location.init)
             self.latestFetchError = nil
         case .failure(let error):
             logger.error("failed to fetch data: \(error)")
             self.latestFetchError = error
-            self.locations = []
         }
     }
     
