@@ -14,6 +14,10 @@ You can also read the diff here: https://github.com/gatamar/wikipedia-ios/compar
 + **Xcode 26+** (Xcode 26.3 for sure)
 + **iOS 26+**
 
+## Demo
+
+https://github.com/user-attachments/assets/9bce3848-b6c1-45db-88ec-574a9e63d86e
+
 ## Architecture
 
 + `MVVM` with some elements of clean architecture is used.
