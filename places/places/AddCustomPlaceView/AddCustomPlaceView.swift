@@ -13,10 +13,10 @@ struct AddCustomPlaceView: View {
     @State private var viewModel: AddCustomPlaceViewModel
     private let onSave: (Location?) -> Void
     init(
-        dependencies: PlacesDependencies,
+        viewModel: AddCustomPlaceViewModel,
         onSave: @escaping (Location?) -> Void
     ) {
-        _viewModel = State(initialValue: AddCustomPlaceViewModel(dependencies: dependencies))
+        self.viewModel = viewModel
         self.onSave = onSave
     }
 

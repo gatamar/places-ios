@@ -97,7 +97,7 @@ struct PlacesListView: View {
                 }
             )
             .sheet(isPresented: $isShowingAddPlaceSheet) {
-                AddCustomPlaceView(dependencies: dependencies) { savedLocation in
+                AddCustomPlaceView(viewModel: AddCustomPlaceViewModel(dependencies: dependencies)) { savedLocation in
                     if let savedLocation {
                         viewModel.handleTap(on: savedLocation)
                     }
