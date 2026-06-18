@@ -72,8 +72,7 @@ final class PlacesListViewModel {
                     userFacingError = UserFacingError(message: errorMessage)
                 }
 
-                // yeah, Apple could do better :)
-                // in case you don't like this recursive pattern, see https://github.com/swiftlang/swift-evolution/blob/main/proposals/0395-observability.md
+                // recursively observe th
                 self.observeLocationRepoErrors()
             }
         }

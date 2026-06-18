@@ -27,10 +27,14 @@ final class LocationNameDetectorImpl: LocationNameDetector {
         guard !locations.isEmpty else { return [] }
         return await withTaskGroup(of: Location.self) { group in
             var addedTasks = 0
+            var detected = [Location]()
             for location in locations {
-                if addedTasks > Constants.maxConcurrentGeocodeTasks {
+                if addedTasks >= Constants.maxConcurrentGeocodeTasks {
                     logger.debug("task cap reached, await for the next one")
-                    _ = await group.next()
+                    if let location = await group.next() {
+                        detected.append(location)
+                    }
+                    addedTasks -= 1
                 }
                 addedTasks += 1
                 group.addTask { [logger] in
@@ -43,7 +47,7 @@ final class LocationNameDetectorImpl: LocationNameDetector {
                     return location.withUpdatedName(name)
                 }
             }
-            var detected = [Location]()
+            
 
             for await value in group {
                 detected.append(value)
